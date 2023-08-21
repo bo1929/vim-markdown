@@ -94,6 +94,11 @@ syn match markdownRule "- *- *-[ -]*$" contained
 
 syn match markdownLineBreak " \{2,\}$"
 
+let s:concealends = ''
+if has('conceal') && get(g:, 'markdown_syntax_conceal', 1) == 1
+  let s:concealends = ' concealends'
+endif
+
 syn region markdownIdDeclaration matchgroup=markdownLinkDelimiter start="^ \{0,3\}!\=\[" end="\]:" oneline keepend nextgroup=markdownUrl skipwhite
 syn match markdownUrl "\S\+" nextgroup=markdownUrlTitle skipwhite contained
 syn region markdownUrl matchgroup=markdownUrlDelimiter start="<" end=">" oneline keepend nextgroup=markdownUrlTitle skipwhite contained
@@ -102,14 +107,10 @@ syn region markdownUrlTitle matchgroup=markdownUrlTitleDelimiter start=+'+ end=+
 syn region markdownUrlTitle matchgroup=markdownUrlTitleDelimiter start=+(+ end=+)+ keepend contained
 
 syn region markdownLinkText matchgroup=markdownLinkTextDelimiter start="!\=\[\%(\_[^][]*\%(\[\_[^][]*\]\_[^][]*\)*]\%( \=[[(]\)\)\@=" end="\]\%( \=[[(]\)\@=" nextgroup=markdownLink,markdownId skipwhite contains=@markdownInline,markdownLineStart
-syn region markdownLink matchgroup=markdownLinkDelimiter start="(" end=")" contains=markdownUrl keepend contained
-syn region markdownId matchgroup=markdownIdDelimiter start="\[" end="\]" keepend contained
-syn region markdownAutomaticLink matchgroup=markdownUrlDelimiter start="<\%(\w\+:\|[[:alnum:]_+-]\+@\)\@=" end=">" keepend oneline
+syn region markdownLink matchgroup=markdownLinkDelimiter start="(" end=")" keepend contained conceal contains=markdownUrl
+syn region markdownId matchgroup=markdownIdDelimiter start="\[" end="\]" keepend contained conceal
+syn region markdownAutomaticLink matchgroup=markdownUrlDelimiter start="<\%(\w\+:\|[[:alnum:]_+-]\+@\)\@=" end=">" keepend oneline conceal
 
-let s:concealends = ''
-if has('conceal') && get(g:, 'markdown_syntax_conceal', 1) == 1
-  let s:concealends = ' concealends'
-endif
 exe 'syn region markdownItalic matchgroup=markdownItalicDelimiter start="\*\S\@=" end="\S\@<=\*\|^$" skip="\\\*" contains=markdownLineStart,@Spell' . s:concealends
 exe 'syn region markdownItalic matchgroup=markdownItalicDelimiter start="\w\@<!_\S\@=" end="\S\@<=_\w\@!\|^$" skip="\\_" contains=markdownLineStart,@Spell' . s:concealends
 exe 'syn region markdownBold matchgroup=markdownBoldDelimiter start="\*\*\S\@=" end="\S\@<=\*\*\|^$" skip="\\\*" contains=markdownLineStart,markdownItalic,@Spell' . s:concealends
@@ -146,6 +147,13 @@ endif
 
 syn match markdownEscape "\\[][\\`*_{}()<>#+.!-]"
 syn match markdownError "\w\@<=_\w\@="
+
+syn include @markdownTex syntax/tex.vim
+syn region markdownMathJax start="\V$" end="\V$" keepend contains=@markdownTex
+syn region markdownMathJax start="\V$$" end="\V$$" keepend contains=@markdownTex
+syn region markdownMathJax start="\V\\begin{\z(\w\+\)}" end="\V\\end{\z1}" keepend contains=@markdownTex
+syn region markdownMathJax start="\\\\\[" end="\\\\\]" keepend contains=@markdownTex
+syn region markdownMathJax start="\\\\(" end="\\\\)" keepend contains=@markdownTex
 
 hi def link markdownH1                    htmlH1
 hi def link markdownH2                    htmlH2
