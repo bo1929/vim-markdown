@@ -2,7 +2,7 @@
 " Language:     Markdown
 " Maintainer:   Tim Pope <https://github.com/tpope/vim-markdown>
 " Filenames:    *.markdown
-" Last Change:  2022 Oct 13
+" Last Change:  2025 Nov 25
 
 if exists("b:current_syntax")
   finish
@@ -146,6 +146,13 @@ endif
 
 syn match markdownEscape "\\[][\\`*_{}()<>#+.!-]"
 syn match markdownError "\w\@<=_\w\@="
+
+syn include @markdownTex syntax/tex.vim
+syn region markdownMathJax start="\V$" end="\V$" keepend contains=@markdownTex
+syn region markdownMathJax start="\V$$" end="\V$$" keepend contains=@markdownTex
+syn region markdownMathJax start="\V\\begin{\z(\w\+\)}" end="\V\\end{\z1}" keepend contains=@markdownTex
+syn region markdownMathJax start="\\\\\[" end="\\\\\]" keepend contains=@markdownTex
+syn region markdownMathJax start="\\\\(" end="\\\\)" keepend contains=@markdownTex
 
 hi def link markdownH1                    htmlH1
 hi def link markdownH2                    htmlH2
