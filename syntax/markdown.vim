@@ -148,8 +148,8 @@ syn match markdownEscape "\\[][\\`*_{}()<>#+.!-]"
 syn match markdownError "\w\@<=_\w\@="
 
 syn include @markdownTex syntax/tex.vim
-syn region markdownMathJax start="\V$" end="\V$" keepend contains=@markdownTex
-syn region markdownMathJax start="\V$$" end="\V$$" keepend contains=@markdownTex
+syn region markdownMathJax start="\(^\|[^\\]\)\zs\$" end="\(^\|[^\\]\)\zs\$" keepend contains=@markdownTex
+syn region markdownMathJax start="\(^\|[^\\]\)\zs\$\$" end="\(^\|[^\\]\)\zs\$\$" keepend contains=@markdownTex
 syn region markdownMathJax start="\V\\begin{\z(\w\+\)}" end="\V\\end{\z1}" keepend contains=@markdownTex
 syn region markdownMathJax start="\\\\\[" end="\\\\\]" keepend contains=@markdownTex
 syn region markdownMathJax start="\\\\(" end="\\\\)" keepend contains=@markdownTex
